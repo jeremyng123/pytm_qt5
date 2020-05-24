@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Server</class>
+ <widget class="QWidget" name="Server">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>400</width>
+    <height>232</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>10</y>
+     <width>381</width>
+     <height>213</height>
+    </rect>
+   </property>
+   <layout class="QFormLayout" name="formLayout">
+    <item row="0" column="0">
+     <widget class="QLabel" name="label1">
+      <property name="text">
+       <string>Name</string>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QLineEdit" name="name"/>
+    </item>
+    <item row="1" column="0">
+     <widget class="QLabel" name="label2">
+      <property name="text">
+       <string>inBoundary</string>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QComboBox" name="boundaries"/>
+    </item>
+    <item row="2" column="0">
+     <widget class="QLabel" name="label3">
+      <property name="text">
+       <string>OS</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QComboBox" name="OS">
+      <item>
+       <property name="text">
+        <string>Windows 10</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Windows 8</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Windows 7</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>macOS</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Ubuntu</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>CentOS</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Fedora</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Red Hat Linux</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Apple iOS</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>Android</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="3" column="0">
+     <widget class="QLabel" name="label4">
+      <property name="text">
+       <string>isHardened</string>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QComboBox" name="isHardened">
+      <item>
+       <property name="text">
+        <string>True</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>False</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="4" column="0">
+     <widget class="QLabel" name="label5">
+      <property name="text">
+       <string>sanitizesInput</string>
+      </property>
+     </widget>
+    </item>
+    <item row="4" column="1">
+     <widget class="QComboBox" name="sanitizesInput">
+      <item>
+       <property name="text">
+        <string>True</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>False</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="5" column="0">
+     <widget class="QLabel" name="label6">
+      <property name="text">
+       <string>encodesOutput</string>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="1">
+     <widget class="QComboBox" name="encodesOutput">
+      <item>
+       <property name="text">
+        <string>True</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>False</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+    <item row="6" column="0">
+     <widget class="QLabel" name="label7">
+      <property name="text">
+       <string>authorizesSources</string>
+      </property>
+     </widget>
+    </item>
+    <item row="6" column="1">
+     <widget class="QComboBox" name="authorizesSources">
+      <item>
+       <property name="text">
+        <string>True</string>
+       </property>
+      </item>
+      <item>
+       <property name="text">
+        <string>False</string>
+       </property>
+      </item>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>
