@@ -17,6 +17,8 @@ class MainWindow(QMainWindow):
         self.name = name
         self.allComponents = allComponents
         self.allBoundaries = allBoundaries
+        self.getTypeFromName = {}
+        self.getNamesFromType = {}
         self.tm = tm
 
         self.setWindowTitle("Edit {0} Programming List".format(self.name))
@@ -78,38 +80,109 @@ class MainWindow(QMainWindow):
 
 
     def c_add(self):
-        dlg = AddComponent(self.allComponents, self.allBoundaries)
+        dlg = AddComponent(self.allComponents, self.allBoundaries, self.getNamesFromType, self.getTypeFromName)
         if dlg.exec_():
             index = dlg.index
             if index == ComponentType.ACTOR.value:
                 name = dlg.wactor.name.text()
+                row = self.componentList.currentRow()
+                self.componentList.insertItem(row, name)
                 b_text = None if dlg.wactor.boundaries.currentText() == 'None' else dlg.wactor.boundaries.currentText()
                 print("b_text: " + str(b_text) + ".")
                 if b_text != None:
-                    Components(index,dlg.wactor.name.text(),allComponents=self.allComponents,boundary=self.allBoundaries[dlg.wactor.boundaries.currentText()])
+                    Components(index,dlg.wactor.name.text(),allComponents=self.allComponents,
+                               boundary=self.allBoundaries[dlg.wactor.boundaries.currentText()],
+                               getNamesFromType=self.getNamesFromType, getTypeFromName=self.getTypeFromName)
                     # print(f"HI {self.allComponents}")
                 else:
-                    Components(index,dlg.wactor.name.text(),allComponents=self.allComponents)
+                    Components(index,dlg.wactor.name.text(),allComponents=self.allComponents,
+                               getNamesFromType=self.getNamesFromType, getTypeFromName=self.getTypeFromName)
                     # print(f"HI1 name: {name} {self.allComponents['actor']}")
                     # print(f"HI2 {self.allComponents['actor'][name].attributes}")
 
 
             elif index == ComponentType.SERVER.value:
-                pass
-            elif index == ComponentType.LAMBDA.value:
-                pass
+                name = dlg.wserver.name.text()
+                row = self.componentList.currentRow()
+                self.componentList.insertItem(row, name)
+                b_text = None if dlg.wserver.boundaries.currentText() == 'None' else dlg.wserver.boundaries.currentText()
+                print("b_text: " + str(b_text) + ".")
+                if b_text != None:
+                    Components(index, dlg.wserver.name.text(), allComponents=self.allComponents,
+                               boundary=self.allBoundaries[dlg.wserver.boundaries.currentText()],
+                               OS=dlg.wserver.OS.currentText(),
+                               isHardened=bool(dlg.wserver.isHardened.currentText()),
+                               sanitizesInput=bool(dlg.wserver.sanitizesInput.currentText()),
+                               encodesOutput=bool(dlg.wserver.encodesOutput.currentText()),
+                               authorizesSource=bool(dlg.wserver.authorizesSource.currentText()),
+                               getNamesFromType=self.getNamesFromType, getTypeFromName=self.getTypeFromName)
+                    # print(f"HI {self.allComponents}")
+                else:
+                    Components(index, dlg.wserver.name.text(), allComponents=self.allComponents,
+                               OS=dlg.wserver.OS.currentText(),
+                               isHardened=bool(dlg.wserver.isHardened.currentText()),
+                               sanitizesInput=bool(dlg.wserver.sanitizesInput.currentText()),
+                               encodesOutput=bool(dlg.wserver.encodesOutput.currentText()),
+                               authorizesSource=bool(dlg.wserver.authorizesSource.currentText()),
+                               getNamesFromType=self.getNamesFromType, getTypeFromName=self.getTypeFromName)
+                    # print(f"HI1 name: {name} {self.allComponents['actor']}")
+                    # print(f"HI2 {self.allComponents['actor'][name].attributes}")
             elif index == ComponentType.DATASTORE.value:
-                pass
+                name = dlg.wdatastore.name.text()
+                row = self.componentList.currentRow()
+                self.componentList.insertItem(row, name)
+                b_text = None if dlg.wdatastore.boundaries.currentText() == 'None' else dlg.wdatastore.boundaries.currentText()
+                print("b_text: " + str(b_text) + ".")
+                """
+                'OS': self.obj.OS,
+                                              'isHardened': self.obj.isHardened,
+                                              'isSQL': self.obj.isSQL,
+                                              'inScope': self.obj.inScope,
+                                              'inBoundary': boundary.name}
+                                              """
+                if b_text != None:
+                    Components(index, dlg.wdatastore.name.text(), allComponents=self.allComponents,
+                               boundary=self.allBoundaries[dlg.wdatastore.boundaries.currentText()],
+                               OS=dlg.wdatastore.OS.currentText(),
+                               isHardened=bool(dlg.wdatastore.isHardened.currentText()),
+                               isSQL=bool(dlg.wdatastore.isSQL.currentText()),
+                               inScope=bool(dlg.wdatastore.inScope.currentText()),
+                               getNamesFromType=self.getNamesFromType, getTypeFromName=self.getTypeFromName)
+                    # print(f"HI {self.allComponents}")
+                else:
+                    Components(index, dlg.wdatastore.name.text(), allComponents=self.allComponents,
+                               OS=dlg.wdatastore.OS.currentText(),
+                               isHardened=bool(dlg.wdatastore.isHardened.currentText()),
+                               isSQL=bool(dlg.wdatastore.isSQL.currentText()),
+                               inScope=bool(dlg.wdatastore.inScope.currentText()),
+                               getNamesFromType=self.getNamesFromType, getTypeFromName=self.getTypeFromName)
+                    # print(f"HI1 name: {name} {self.allComponents['actor']}")
+                    # print(f"HI2 {self.allComponents['actor'][name].attributes}")
+            elif index == ComponentType.LAMBDA.value:
+                name = dlg.wlambda.name.text()
+                row = self.componentList.currentRow()
+                self.componentList.insertItem(row, name)
+                b_text = None if dlg.wlambda.boundaries.currentText() == 'None' else dlg.wlambda.boundaries.currentText()
+                print("b_text: " + str(b_text) + ".")
+                """
+               'hasAccessControl' : self.obj.hasAccessControl}
+                                              """
+                if b_text != None:
+                    Components(index, dlg.wlambda.name.text(), allComponents=self.allComponents,
+                               boundary=self.allBoundaries[dlg.wlambda.boundaries.currentText()],
+                               hasAccessControl=bool(dlg.wlambda.hasAccessControl.currentText()),
+                               getNamesFromType=self.getNamesFromType, getTypeFromName=self.getTypeFromName)
+                    # print(f"HI {self.allComponents}")
+                else:
+                    Components(index, dlg.wlambda.name.text(), allComponents=self.allComponents,
+                               hasAccessControl=bool(dlg.wlambda.hasAccessControl.currentText()),
+                               getNamesFromType=self.getNamesFromType, getTypeFromName=self.getTypeFromName)
+                    # print(f"HI1 name: {name} {self.allComponents['actor']}")
+                    # print(f"HI2 {self.allComponents['actor'][name].attributes}")
             else:
                 print("Bugged out here at c_add()")
         else:
             print("Cancel!")
-        # row = self.componentList.currentRow()
-        # title = "Add Component"
-        # string, ok = QInputDialog.getText(self, title, title)
-        # if ok and string != "":
-        #     print(string)
-        #     self.componentList.insertItem(row, string)
 
 
     def c_edit(self):
@@ -145,12 +218,19 @@ class MainWindow(QMainWindow):
 
 
     def b_add(self):
+        dlg = AddBoundary(self.allComponents, self.allBoundaries)
         row = self.boundaryList.currentRow()
-        title = "Add {0}".format(self.name)
-        string, ok = QInputDialog.getText(self, title, title)
-        if ok and string != "":
-            print(string)
-            self.boundaryList.insertItem(row, string)
+        if dlg.exec_():
+            selectedItems = dlg.allComponents.selectedItems()
+            print(f"selected indexes: {selectedItems}")
+            b = Boundaries(dlg.name, self.allBoundaries)
+            for widget in selectedItems:
+                self.allComponents[self.getTypeFromName(widget.text())][widget.text()].addBoundary()
+
+            print(f"getNamesFromType: {self.getNamesFromType}\ngetTypeFromName: {self.getTypeFromName}")
+            self.boundaryList.insertItem(row, dlg.boundary.text())
+        else:
+            print("Cancelled at b_add")
 
 
     def b_edit(self):
@@ -185,6 +265,8 @@ class MainWindow(QMainWindow):
         self.close()
 
 
+def renameKey(dict, old, new):
+    dict[new] = dict.pop(old)
 
 
 
