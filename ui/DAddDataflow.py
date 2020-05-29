@@ -1,0 +1,91 @@
+# -*- coding: utf-8 -*-
+
+# Form implementation generated from reading ui file 'dadd_dataflow.ui'
+#
+# Created by: PyQt5 UI code generator 5.9.2
+#
+# WARNING! All changes made in this file will be lost!
+
+from PyQt5 import QtCore, QtGui, QtWidgets
+
+class Ui_AddDataflow(object):
+    def setupUi(self, AddDataflow):
+        AddDataflow.setObjectName("AddDataflow")
+        AddDataflow.resize(400, 476)
+        self.widget = QtWidgets.QWidget(AddDataflow)
+        self.widget.setGeometry(QtCore.QRect(21, 21, 351, 441))
+        self.widget.setObjectName("widget")
+        self.formLayout = QtWidgets.QFormLayout(self.widget)
+        self.formLayout.setContentsMargins(0, 0, 0, 0)
+        self.formLayout.setObjectName("formLayout")
+        self.label = QtWidgets.QLabel(self.widget)
+        self.label.setObjectName("label")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.LabelRole, self.label)
+        self.components_src = QtWidgets.QComboBox(self.widget)
+        self.components_src.setObjectName("components_src")
+        self.formLayout.setWidget(0, QtWidgets.QFormLayout.FieldRole, self.components_src)
+        self.label_2 = QtWidgets.QLabel(self.widget)
+        self.label_2.setObjectName("label_2")
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.LabelRole, self.label_2)
+        self.components_sink = QtWidgets.QComboBox(self.widget)
+        self.components_sink.setObjectName("components_sink")
+        self.formLayout.setWidget(1, QtWidgets.QFormLayout.FieldRole, self.components_sink)
+        self.label_4 = QtWidgets.QLabel(self.widget)
+        self.label_4.setObjectName("label_4")
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.LabelRole, self.label_4)
+        self.name = QtWidgets.QLineEdit(self.widget)
+        self.name.setObjectName("name")
+        self.formLayout.setWidget(2, QtWidgets.QFormLayout.FieldRole, self.name)
+        self.label_3 = QtWidgets.QLabel(self.widget)
+        self.label_3.setObjectName("label_3")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.LabelRole, self.label_3)
+        self.responseTo = QtWidgets.QComboBox(self.widget)
+        self.responseTo.setObjectName("responseTo")
+        self.formLayout.setWidget(3, QtWidgets.QFormLayout.FieldRole, self.responseTo)
+        self.label_5 = QtWidgets.QLabel(self.widget)
+        self.label_5.setObjectName("label_5")
+        self.formLayout.setWidget(4, QtWidgets.QFormLayout.LabelRole, self.label_5)
+        self.protocol = QtWidgets.QComboBox(self.widget)
+        self.protocol.setObjectName("protocol")
+        self.protocol.addItem("")
+        self.protocol.addItem("")
+        self.protocol.addItem("")
+        self.formLayout.setWidget(4, QtWidgets.QFormLayout.FieldRole, self.protocol)
+        self.label_6 = QtWidgets.QLabel(self.widget)
+        self.label_6.setObjectName("label_6")
+        self.formLayout.setWidget(5, QtWidgets.QFormLayout.LabelRole, self.label_6)
+        self.dstPort = QtWidgets.QSpinBox(self.widget)
+        self.dstPort.setObjectName("dstPort")
+        self.formLayout.setWidget(5, QtWidgets.QFormLayout.FieldRole, self.dstPort)
+        self.buttonBox = QtWidgets.QDialogButtonBox(self.widget)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName("buttonBox")
+        self.formLayout.setWidget(8, QtWidgets.QFormLayout.SpanningRole, self.buttonBox)
+        self.note = QtWidgets.QPlainTextEdit(self.widget)
+        self.note.setObjectName("note")
+        self.formLayout.setWidget(6, QtWidgets.QFormLayout.FieldRole, self.note)
+        self.label_7 = QtWidgets.QLabel(self.widget)
+        self.label_7.setObjectName("label_7")
+        self.formLayout.setWidget(6, QtWidgets.QFormLayout.LabelRole, self.label_7)
+
+        self.retranslateUi(AddDataflow)
+        self.buttonBox.accepted.connect(AddDataflow.accept)
+        self.buttonBox.rejected.connect(AddDataflow.reject)
+        QtCore.QMetaObject.connectSlotsByName(AddDataflow)
+
+    def retranslateUi(self, AddDataflow):
+        _translate = QtCore.QCoreApplication.translate
+        AddDataflow.setWindowTitle(_translate("AddDataflow", "Dialog"))
+        self.label.setText(_translate("AddDataflow", "Source"))
+        self.label_2.setText(_translate("AddDataflow", "Sink"))
+        self.label_4.setText(_translate("AddDataflow", "name"))
+        self.label_3.setText(_translate("AddDataflow", "responseTo"))
+        self.label_5.setText(_translate("AddDataflow", "protocol"))
+        self.protocol.setItemText(0, _translate("AddDataflow", "HTTP"))
+        self.protocol.setItemText(1, _translate("AddDataflow", "HTTPS/SSL"))
+        self.protocol.setItemText(2, _translate("AddDataflow", "MySQL"))
+        self.label_6.setText(_translate("AddDataflow", "dstPort"))
+        self.note.setPlaceholderText(_translate("AddDataflow", "short description of the dataflow"))
+        self.label_7.setText(_translate("AddDataflow", "note"))
+
