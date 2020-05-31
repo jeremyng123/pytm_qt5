@@ -25,6 +25,7 @@ class Components(ThreatModel):
         self.kwargs = kwargs
         self.getTypeFromName = getTypeFromName
         self.allComponents = allComponents
+        self.df = DataFlows(self, allComponents)
         if type==ComponentType.ACTOR.value:
             self.name = name
             self.type = "Actor"
@@ -32,6 +33,7 @@ class Components(ThreatModel):
             self.attributes['name'] = self.name
             self.attributes['type'] = self.type
             if boundary is not None:
+                print(f'boundary in component: {boundary}')
                 self.obj.inBoundary = boundary.obj
                 self.attributes['obj'] = {'header': self.obj,
                                           'inBoundary': boundary.name}
@@ -57,7 +59,7 @@ class Components(ThreatModel):
             self.attributes['name'] = self.name
             self.attributes['type'] = self.type
             if boundary is not None:
-                self.obj.inBoundary = boundary
+                self.obj.inBoundary = boundary.obj
                 self.attributes['obj'] = {'header': self.obj,
                                           'OS': self.obj.OS,
                                           'isHardened': self.obj.isHardened,
@@ -89,7 +91,7 @@ class Components(ThreatModel):
             self.obj.isSQL = kwargs['isSQL']
             self.obj.inScope = kwargs['inScope']
             if boundary is not None:
-                self.obj.inBoundary = boundary
+                self.obj.inBoundary = boundary.obj
                 self.attributes['obj'] = {'header': self.obj,
                                           'OS': self.obj.OS,
                                           'isHardened': self.obj.isHardened,
@@ -118,7 +120,7 @@ class Components(ThreatModel):
             self.type = "Lambda"
             self.obj = Lambda(name)
             if boundary is not None:
-                self.obj.inBoundary = boundary
+                self.obj.inBoundary = boundary.obj
                 self.attributes['obj'] = {'inBoundary' : boundary.name}
             self.obj.hasAccessControl = kwargs['hasAccessControl']
             self.attributes['obj'] = {'header': self.obj,
@@ -171,9 +173,8 @@ class Boundaries(ThreatModel):
         self.allBoundaries = allBoundaries          # this is a dict containing Boundaries object as values and boundary.name as keys
         self.componentsInBoundaries = {}            # this is a dict where the values is a list of all components found inside a boundary-key (str datatype)
         if self.name not in allBoundaries.keys():
-            allBoundaries[self.name] = {'name' : self.name,
-                                        'obj' : self.obj,
-                                        'componentsInSelf' : self.componentsInSelf}
+            self.allBoundaries[self.name] = self
+            self.componentsInBoundaries[self.name] = []
         else:
             print("TODO: should not allow user to use same name. future dev.")
 
@@ -184,6 +185,7 @@ class Boundaries(ThreatModel):
         """
         for component in components:
             self.componentsInSelf.append(component)
+            self.componentsInBoundaries[self.name].append(component)
 
     def addComponentToSelf(self, component):
         """
@@ -191,6 +193,7 @@ class Boundaries(ThreatModel):
         :return:
         """
         self.componentsInSelf.append(component)
+        self.componentsInBoundaries[self.name].append(component)
 
     def removeComponentFromSelf(self, component):
         self.componentsInSelf.remove(component)
@@ -200,8 +203,8 @@ class Boundaries(ThreatModel):
             for boundaries_obj in self.allBoundaries.values():
                 self.componentsInBoundaries[boundaries_obj.name] = boundaries_obj.componentsInSelf
 
-    def __repr__(self):
-        return self.obj
+    # def __repr__(self):
+    #     return self.obj
 
     def __str__(self):
         return self.name
@@ -227,3 +230,57 @@ class Boundaries(ThreatModel):
 
     def getAllBoundaries(self):
         return self.allBoundaries
+
+
+class DataFlows(ThreatModel):
+    def __init__(self, component, allComponents = {}, allDataflows={}):
+        """
+        component is the Components object
+        """
+        self.src = component
+        self.name = self.src.name
+        print(f"type of name: {(str(self.name))}")
+        self.obj = None
+        self.sink_flowName = None
+        self.attributes = {}
+        self.allComponents = allComponents
+        self.allDataflows = allDataflows
+        if self.name not in self.allDataflows.keys():
+            self.allDataflows[self.name] = []
+
+
+    def flowTo(self, sink, dataflowname, kwargs):
+        """
+        other should be the Components object
+        kwargs contains notes/keys such as protocol, dstPort, data, note.
+        responseTo is another dataflow object. this is filled if an existing dataflow is present and this
+            dataflow only happens if the responseTo dataflow happens firstw
+        """
+        if self.obj is None:
+            self.obj = Dataflow(self.src.obj, sink.obj, dataflowname)
+            print(dataflowname, "dataflowname here")
+            self.allDataflows[self.name].append(self)
+            self.sink_flowName = sink.name, dataflowname
+            for k,v in kwargs.items():
+                if k == 'protocol':
+                    self.obj.protocol = v
+                    self.attributes[k] = v
+                elif k == 'dstPort':
+                    self.obj.dstPort = v
+                    self.attributes[k] = v
+                elif k == 'data':
+                    self.obj.data = v
+                    self.attributes[k] = v
+                ## TODO: the rest of the attributes that are available in the Dataflow class
+                elif k == 'authenticatedWith':
+                    self.obj.authenticatedWith = v
+                    self.attributes[k] = v
+                elif k == 'authorizesSource':
+                    self.obj.authorizesSource = v
+                    self.attributes[k] = v
+                elif k == 'definesConnectionTimeout':
+                    self.obj.definesConnectionTimeout = v
+                    self.attributes[k] = v
+                elif k == 'responseTo':
+                    self.obj.responseTo = v
+                    self.attributes[k] = v

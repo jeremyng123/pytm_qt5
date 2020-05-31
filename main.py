@@ -11,12 +11,13 @@ from enum_types import *
 
 
 class MainWindow(QMainWindow):
-    def __init__(self, name, allComponents = {}, allBoundaries = {}, df = {}, tm = ThreatModel("example",[],[])):
+    def __init__(self, name, allComponents = {}, allBoundaries = {}, allDataflows = {}, tm = ThreatModel("example",[],[])):
         super(MainWindow, self).__init__()
 
         self.name = name
         self.allComponents = allComponents
         self.allBoundaries = allBoundaries
+        self.allDataflows = allDataflows
         self.getTypeFromName = {}
         self.getNamesFromType = {}
         self.tm = tm
@@ -26,15 +27,22 @@ class MainWindow(QMainWindow):
 
         self.componentList = QListWidget()
         self.boundaryList = QListWidget()
+        self.dataflowList = QListWidget()
+
+        # TODO: addItems (should be in list format)
         if allComponents is not None:
             self.componentList.addItems(allComponents)
             self.componentList.setCurrentRow(0)
         if allBoundaries is not None:
             self.boundaryList.addItems(allBoundaries)
             self.boundaryList.setCurrentRow(0)
+        if allDataflows is not None:
+            self.dataflowList.addItems(allDataflows)
+            self.dataflowList.setCurrentRow(0)
 
         h_buttons1 = QHBoxLayout()
         h_buttons2 = QHBoxLayout()
+        h_buttons3 = QHBoxLayout()
 
 
         for text, slot in (("Add", self.c_add),
@@ -57,6 +65,19 @@ class MainWindow(QMainWindow):
             h_buttons2.addWidget(button)
             button.clicked.connect(slot)
 
+        for text, slot in (("Add", self.d_add),
+                           ("Edit", self.d_edit),
+                           ("Remove", self.d_remove),
+                           ("Sort", self.d_sort),
+                           ("Close", self.d_close)):
+            button = QPushButton(text)
+
+            h_buttons3.addWidget(button)
+            button.clicked.connect(slot)
+        button = QPushButton("Generate")
+        h_buttons3.addWidget(button)
+        button.clicked.connect(self.generate)
+
         v_components_box = QVBoxLayout()
         v_components_box.addWidget(QLabel("Components"))
         v_components_box.addWidget(self.componentList)
@@ -67,10 +88,16 @@ class MainWindow(QMainWindow):
         v_boundary_box.addWidget(self.boundaryList)
         v_boundary_box.addLayout(h_buttons2)
 
+        v_dataflow_box = QVBoxLayout()
+        v_dataflow_box.addWidget(QLabel("Dataflow"))
+        v_dataflow_box.addWidget(self.dataflowList)
+        v_dataflow_box.addLayout(h_buttons3)
+
         h_window = QHBoxLayout()
 
         h_window.addLayout(v_components_box)
         h_window.addLayout(v_boundary_box)
+        h_window.addLayout(v_dataflow_box)
 
         window = QWidget()
         window.setLayout(h_window)
@@ -78,6 +105,13 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(window)
         print(self.size())
 
+    def getComponentFromName(self, name):
+        type = self.getTypeFromName[name]
+        return self.allComponents[type][name]
+
+    def addBoundary(self, component, boundary):
+        component.addBoundary(boundary)
+        boundary.addComponentToSelf(component.name)
 
     def c_add(self):
         dlg = AddComponent(self.allComponents, self.allBoundaries, self.getNamesFromType, self.getTypeFromName)
@@ -223,12 +257,15 @@ class MainWindow(QMainWindow):
         if dlg.exec_():
             selectedItems = dlg.allComponents.selectedItems()
             print(f"selected indexes: {selectedItems}")
-            b = Boundaries(dlg.name, self.allBoundaries)
+            b = Boundaries(dlg.name.text(), self.allBoundaries)
+            c = None
             for widget in selectedItems:
-                self.allComponents[self.getTypeFromName(widget.text())][widget.text()].addBoundary()
+                c = self.getComponentFromName(widget.text())
+                self.addBoundary(c, b)
 
-            print(f"getNamesFromType: {self.getNamesFromType}\ngetTypeFromName: {self.getTypeFromName}")
-            self.boundaryList.insertItem(row, dlg.boundary.text())
+            print(f"getNamesFromType: {self.getNamesFromType}\ngetTypeFromName: {self.getTypeFromName}\nallComponents: {allComponents}\nallBoundaries: {allBoundaries}")
+            print(b.componentsInBoundaries if c is not None else "c is not initialized")
+            self.boundaryList.insertItem(row, dlg.name.text())
         else:
             print("Cancelled at b_add")
 
@@ -265,9 +302,86 @@ class MainWindow(QMainWindow):
         self.close()
 
 
+    def d_add(self):
+        dlg = AddDataflow(self.allComponents, self.allBoundaries, self.allDataflows, self.getNamesFromType, self.getTypeFromName)
+        row = self.boundaryList.currentRow()
+        if dlg.exec_():
+            c_src = dlg.components_src.currentText()
+            c_src = getComponentObject(self.allComponents, c_src, self.getTypeFromName)
+
+            c_sink = dlg.components_sink.currentText()
+            c_sink = getComponentObject(self.allComponents, c_sink, self.getTypeFromName)
+
+            name = dlg.name.text()
+            answer = {}
+            if dlg.responseTo.currentText() != "None":
+                answer['responseTo'] = dlg.responseTo.currentText()
+            if dlg.dstPort.text() != '0':
+                answer['dstPort'] = dlg.dstPort.text()
+            if dlg.note.toPlainText() != "":
+                answer['note'] = dlg.note.toPlainText()
+            answer['protocol'] = dlg.protocol.currentText()
+            d = DataFlows(c_src,self.allComponents, self.allDataflows)
+            d.flowTo(c_sink, name, answer)
+            dataflowList = []
+            print(f"allDataflows: {self.allDataflows}")
+            for src_name, dataflows in self.allDataflows.items():
+                for df in dataflows:
+                    dataflow = src_name + " -> "
+                    sink_name, flowName = df.sink_flowName
+                    dataflow += sink_name + ": " + flowName
+                    if 'protocol' in df.attributes.keys():
+                         dataflow += " (" + df.attributes['protocol'] + ")"
+
+                    dataflowList.append(dataflow)
+
+            self.dataflowList.addItems(dataflowList)
+        else:
+            print("Cancelled at b_add")
+
+
+    def d_edit(self):
+        row = self.boundaryList.currentRow()
+        item = self.boundaryList.item(row)
+        if item is not None:
+            title = "Edit {0}".format(self.name)
+            string, ok = QInputDialog.getText(self, title, title,
+                    QLineEdit.Normal, item.text())
+            if ok and string != "":
+                item.setText(string)
+
+
+    def d_remove(self):
+        row = self.boundaryList.currentRow()
+        item = self.boundaryList.item(row)
+        if item is None:
+            return
+        reply = QMessageBox.question(self, "Remove {0}".format(
+                self.name), "Remove {0} `{1}'?".format(
+                self.name, str(item.text())),
+                QMessageBox.Yes|QMessageBox.No)
+        if reply == QMessageBox.Yes:
+            item = self.boundaryList.takeItem(row)
+            del item
+
+    def d_sort(self):
+        self.boundaryList.sortItems()
+
+
+    def d_close(self):
+        self.close()
+
+    def generate(self):
+        self.close()
+
+
 def renameKey(dict, old, new):
     dict[new] = dict.pop(old)
 
+def getComponentObject(allComponents, component_name, getTypeFromName):
+    component_type = getTypeFromName[component_name]
+    componentObject = allComponents[component_type][component_name]
+    return componentObject
 
 
 
