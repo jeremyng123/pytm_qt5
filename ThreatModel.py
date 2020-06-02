@@ -266,8 +266,8 @@ class DataFlows(ThreatModel):
                     self.obj.protocol = v
                     self.attributes[k] = v
                 elif k == 'dstPort':
-                    self.obj.dstPort = v
-                    self.attributes[k] = v
+                    self.obj.dstPort = int(v)
+                    self.attributes[k] = int(v)
                 elif k == 'data':
                     self.obj.data = v
                     self.attributes[k] = v

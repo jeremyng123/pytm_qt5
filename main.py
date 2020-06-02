@@ -6,6 +6,9 @@ import random
 from dialogs import *
 from ThreatModel import *
 from enum_types import *
+import subprocess
+import os
+from io import StringIO
 
 
 
@@ -200,7 +203,7 @@ class MainWindow(QMainWindow):
                 print("b_text: " + str(b_text) + ".")
                 """
                'hasAccessControl' : self.obj.hasAccessControl}
-                                              """
+               """
                 if b_text != None:
                     Components(index, dlg.wlambda.name.text(), allComponents=self.allComponents,
                                boundary=self.allBoundaries[dlg.wlambda.boundaries.currentText()],
@@ -367,22 +370,54 @@ class MainWindow(QMainWindow):
     def d_sort(self):
         self.boundaryList.sortItems()
 
-
     def d_close(self):
         self.close()
 
-    def generate(self):
-        self.close()
 
+
+    def generate(self):
+        with Capturing() as output:
+            self.tm.start()
+        # self.tm.start()
+        with open('sample.txt','w+') as tempf:
+            full_string = ""
+            for line in output:
+                full_string+=line + '\n'
+            tempf.write(full_string)
+        subprocess.Popen(["dot", "-Tpng", "sample.txt", "-o", "sample.png"], shell=True)
+        # with open('sample.png','w+') as tempf:
+        #     p = subprocess.Popen(["dot", "-Tpng", ])
+        # with open('sample.png','w+') as tempf:
+        #     p2 = subprocess.Popen(["dot", "-Tpng"], stdin=self.tm.start(),
+        #                          stdout=tempf, stderr=subprocess.PIPE)
+        #     p2.wait()
+        #     tempf.seek(0)
+        #     p2.communicate()
+        #
+        # print(tempf.read())
+
+        # print(tempf.read())
+
+
+class Capturing(list):
+    def __enter__(self):
+        self._stdout = sys.stdout
+        sys.stdout = self._stringio = StringIO()
+        return self
+
+    def __exit__(self, *args):
+        self.extend(self._stringio.getvalue().splitlines())
+        del self._stringio  # free up some memory
+        sys.stdout = self._stdout
 
 def renameKey(dict, old, new):
     dict[new] = dict.pop(old)
+
 
 def getComponentObject(allComponents, component_name, getTypeFromName):
     component_type = getTypeFromName[component_name]
     componentObject = allComponents[component_type][component_name]
     return componentObject
-
 
 
 if __name__ == "__main__":

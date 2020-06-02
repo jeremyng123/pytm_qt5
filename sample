@@ -1,0 +1,28 @@
+digraph tm {
+	graph [
+	fontname = Arial;
+	fontsize = 14;
+	]
+	node [
+	fontname = Arial;
+	fontsize = 14;
+	rankdir = lr;
+	]
+	edge [
+	shape = none;
+	fontname = Arial;
+	fontsize = 12;
+	]
+	labelloc = "t";
+	fontsize = 20;
+	nodesep = 1;
+
+bcaabdcdecddfddfaffca [
+	shape = square;
+	label = <<table border="0" cellborder="0" cellpadding="2"><tr><td><b>abcdef</b></td></tr></table>>;
+]
+	bcaabdcdecddfddfaffca -> bcaabdcdecddfddfaffca [
+		color = black;
+		label = <<table border="0" cellborder="0" cellpadding="2"><tr><td><font color ="black"><b>1234567890</b></font></td></tr></table>>;
+	]
+}

@@ -22,7 +22,6 @@ class AddComponent(QDialog):
     DATASTORE_HEIGHT = 290
     LAMBDA_HEIGHT = 195
     def __init__(self, allComponents={}, allBoundaries={}, getNamesFromType={}, getTypesFromName={}):
-
         super(AddComponent, self).__init__()
         self.setWindowTitle("Add new component")
         self.stackedlayout = QStackedLayout()
